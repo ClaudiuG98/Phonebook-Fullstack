@@ -3,14 +3,14 @@ const app = express()
 require('dotenv').config()
 var morgan = require('morgan')
 
-const Person = require("./models/person")
+const Person = require('./models/person')
 const cors = require('cors')
 
 morgan.token('body', (req) => {
-  return JSON.stringify(req.body);
-});
+  return JSON.stringify(req.body)
+})
 
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
@@ -23,7 +23,7 @@ app.use(express.json())
 app.use(requestLogger)
 app.use(express.static('dist'))
 app.use(cors())
-app.use(morgan('tiny'));
+app.use(morgan('tiny'))
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
@@ -35,15 +35,15 @@ app.get('/info', (request, response) => {
       response.send(`<p>Phonebook has info for ${count} people</p><p>${Date()}</p>`)
     })
     .catch(error => {
-      console.error(error);
-      response.status(500).send('Error fetching count');
-    });
+      console.error(error)
+      response.status(500).send('Error fetching count')
+    })
 })
 
 app.get('/persons', (request, response) => {
-    Person.find({}).then(persons => {
-      response.json(persons)
-    })
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.post('/persons', (request, response, next) => {
@@ -59,9 +59,9 @@ app.post('/persons', (request, response, next) => {
   })
 
   person.save().then(savedPerson => {
-    response.json(savedPerson);
+    response.json(savedPerson)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 
@@ -79,19 +79,19 @@ app.get('/persons/:id', (request, response, next) => {
 
 app.delete('/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
 })
 
 app.put('/persons/:id', (request, response, next) => {
-  const {name, number} = request.body
+  const { name, number } = request.body
 
   Person.findByIdAndUpdate(
-      request.params.id, 
-      {name, number}, 
-      { new: true, runValidators: true, context: 'query' })
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: 'query' })
     .then(updatePerson => {
       response.json(updatePerson)
     })
